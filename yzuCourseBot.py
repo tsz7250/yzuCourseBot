@@ -233,7 +233,7 @@ if __name__ == '__main__':
 
 # the courses you want to select, format: '`deptId`,`courseId``classId`'
     coursesList = [
-         '312,EEB219A' #智慧型科技應用
+         '304,CS352A'
     ]
 
     # Time Parameter, sleep n seconds

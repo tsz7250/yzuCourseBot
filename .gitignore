@@ -20,3 +20,10 @@ __pycache__/
 env/
 pip-log.txt
 pip-delete-this-directory.txt
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+*.spec~
+*.manifest

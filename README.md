@@ -114,16 +114,55 @@
 
 </details>
 
-## Usage
+## 使用方式
 
-### 1. 新增 `accounts.ini` 存放Portal帳密的檔案，格式如下:
+### 方式一：直接下載執行檔（推薦給一般用戶）
+
+**無需安裝 Python，最簡單的使用方式！**
+
+1. 前往 [Releases](https://github.com/你的用戶名/yzuCourseBot/releases) 頁面
+2. 下載最新版本的 `元智選課機器人.exe`
+3. 雙擊執行，開啟圖形介面
+4. 輸入帳號、密碼、課程清單，點擊「開始選課」
+
+詳細說明請參考下載檔案中附帶的 `使用說明.md`
+
+**課程清單格式範例：**
+```
+312,EEB219A
+304,CS352A
+901,LS239A
+```
+
+### 方式二：使用 GUI 圖形介面版本（需要 Python）
+
+適合想要自己編譯或開發的用戶。
+
+1. 確保已安裝 Python 3.8 或以上版本
+2. 安裝依賴套件：
+```bash
+pip install -r requirements.txt
+```
+
+3. 執行 GUI 版本：
+```bash
+python yzuCourseBot_GUI.py
+```
+
+4. 在圖形介面中輸入帳號、密碼、課程清單，點擊「開始選課」
+
+### 方式三：使用原始命令列版本（需要 Python）
+
+適合進階用戶和自動化腳本。
+
+#### 1. 新增 `accounts.ini` 存放Portal帳密的檔案，格式如下:
 ```
 [Default]
 Account= your account
 Password= your password
 ```
 
-### 2. 修改 `yzuCourseBot.py` 中的`coursesList`變數新增想選的課程清單，格式如下:
+#### 2. 修改 `yzuCourseBot.py` 中的`coursesList`變數新增想選的課程清單，格式如下:
 ```
 coursesList = [
     '304,CS352A', 
@@ -138,12 +177,24 @@ coursesList = [
 
 以上資訊都能在課程查詢網站或是選課系統中得知的訊息
 
-### 3. 執行 `yzuCourseBot.py`
+#### 3. 執行 `yzuCourseBot.py`
 ```
 $ python yzuCourseBot.py
 ```
 
 **請用Python3以上的版本執行**
 
-## Windows 安裝教學
+## 打包成執行檔（給維護者）
+
+如果您想自己打包成 `.exe` 執行檔：
+
+### 本地打包
+```bash
+# Windows
+.\build.bat
+```
+
+打包後的執行檔位於 `dist\元智選課機器人.exe`
+
+## Windows 手動安裝教學
 請參考 [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md) 文件以獲得完整的 Windows 安裝指南。
