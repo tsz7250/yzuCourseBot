@@ -10,6 +10,7 @@ import os
 import sys
 import cv2
 import time
+import tempfile
 import requests
 import numpy as np
 import tkinter as tk
@@ -43,8 +44,8 @@ class CourseBot:
         self.coursesDB = {}
         self.log_callback = log_callback
         
-        # captcha.png 存放在當前工作目錄（用戶執行 exe 的地方，有寫入權限）
-        self.captcha_path = os.path.join(os.getcwd(), 'captcha.png')
+        # captcha.png 存放在系統暫存目錄
+        self.captcha_path = os.path.join(tempfile.gettempdir(), 'yzuCourseBot_captcha.png')
 
         # for keras - 直接載入模型但不編譯（從打包資源中讀取）
         model_path = resource_path('model.h5')
@@ -479,6 +480,14 @@ class CourseBotGUI:
             import traceback
             self.log_message(traceback.format_exc())
         finally:
+            # 清理臨時驗證碼檔案
+            captcha_path = os.path.join(tempfile.gettempdir(), 'yzuCourseBot_captcha.png')
+            if os.path.exists(captcha_path):
+                try:
+                    os.remove(captcha_path)
+                    self.log_message(f"已清理臨時檔案: {captcha_path}")
+                except Exception as e:
+                    self.log_message(f"清理臨時檔案失敗: {e}")
             self.finish_bot()
             
     def finish_bot(self):

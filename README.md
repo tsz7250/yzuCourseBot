@@ -120,7 +120,7 @@
 
 **無需安裝 Python，最簡單的使用方式！**
 
-1. 前往 [Releases](https://github.com/你的用戶名/yzuCourseBot/releases) 頁面
+1. 前往 [Releases](https://github.com/tszngaiyip/yzuCourseBot/releases) 頁面
 2. 下載最新版本的 `元智選課機器人.exe`
 3. 雙擊執行，開啟圖形介面
 4. 輸入帳號、密碼、課程清單，點擊「開始選課」

@@ -32,54 +32,51 @@ jobs:
         cd dist
         dir
         
-    - name: Create release notes
-      id: release_notes
+    - name: Verify executable exists
       run: |
-        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-        echo "## 元智大學選課機器人 ${{ github.ref_name }}" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### 📥 下載說明" >> $GITHUB_ENV
-        echo "**只需下載 \`元智選課機器人.exe\` 即可完整使用，無需其他檔案！**" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### 🚀 使用方式" >> $GITHUB_ENV
-        echo "1. 下載 \`元智選課機器人.exe\`" >> $GITHUB_ENV
-        echo "2. 放在任意資料夾，雙擊執行" >> $GITHUB_ENV
-        echo "3. 在圖形介面中輸入帳號、密碼、課程清單" >> $GITHUB_ENV
-        echo "4. 點擊「開始選課」按鈕" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### 📋 課程清單格式" >> $GITHUB_ENV
-        echo "每行一個課程，格式：\`部門代碼,課程代碼\`" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "範例：" >> $GITHUB_ENV
-        echo "\`\`\`" >> $GITHUB_ENV
-        echo "312,EEB219A" >> $GITHUB_ENV
-        echo "312,CS201B" >> $GITHUB_ENV
-        echo "\`\`\`" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### 💻 系統需求" >> $GITHUB_ENV
-        echo "- Windows 10/11" >> $GITHUB_ENV
-        echo "- 網路連線" >> $GITHUB_ENV
-        echo "- **無需安裝 Python 或任何其他軟體**" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### ⚠️ 注意事項" >> $GITHUB_ENV
-        echo "- 首次執行可能需要 10-30 秒啟動（解壓縮內部資源）" >> $GITHUB_ENV
-        echo "- 程式執行時會在當前目錄下產生 \`captcha.png\` 臨時檔案" >> $GITHUB_ENV
-        echo "- 請確保網路連線正常" >> $GITHUB_ENV
-        echo "- 請在選課時間內使用" >> $GITHUB_ENV
-        echo "- Windows Defender 可能會警告，請選擇「仍要執行」" >> $GITHUB_ENV
-        echo "" >> $GITHUB_ENV
-        echo "### 📄 附加檔案" >> $GITHUB_ENV
-        echo "- \`使用說明.md\`：詳細說明文件（可選下載）" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-      shell: bash
-      
+        if not exist "dist\元智選課機器人.exe" (
+          echo "Error: Executable not found!"
+          exit 1
+        )
+        echo "Executable found successfully"
+        
+    - name: Create ZIP archive
+      run: |
+        cd dist
+        powershell Compress-Archive -Path "元智選課機器人.exe" -DestinationPath "元智選課機器人.zip"
+        dir
+        
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          dist/元智選課機器人.exe
-          使用說明.md
-        body: ${{ env.RELEASE_NOTES }}
+          dist/元智選課機器人.zip
+        body: |
+          ## 元智大學選課機器人 ${{ github.ref_name }}
+          
+          ### 📥 下載說明
+          
+          下載 `元智選課機器人.zip`（檔案大小約 250 MB，比原本減少 30%）
+          
+          ### 使用方式
+          1. 下載 `元智選課機器人.zip`
+          2. 解壓縮 ZIP 檔案
+          3. 雙擊執行 `元智選課機器人.exe`
+          4. 在圖形介面中輸入帳號、密碼、課程清單
+          5. 點擊「開始選課」按鈕
+          
+          ### 課程清單格式
+          每行一個課程，格式：`系所代碼,課程代碼`
+          
+          範例：
+          ```
+          312,EEB219A
+          304,CS201B
+          ```
+          
+          ### ⚠️ 注意事項
+          - 請確保解壓縮後再執行，不要直接在壓縮檔內執行
+          - 部分防毒軟體可能會誤報，請加入信任清單
         draft: false
         prerelease: false
       env:
@@ -89,5 +86,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: YZU-Course-Bot-${{ github.ref_name }}
-        path: dist/元智選課機器人.exe
+        path: dist/元智選課機器人.zip
 

@@ -21,7 +21,16 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        # 排除確定不需要的開發和數據分析工具
+        'pytest',
+        'IPython',
+        'jupyter',
+        'notebook',
+        'matplotlib',
+        'pandas',
+        'scipy',
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
