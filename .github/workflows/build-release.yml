@@ -34,10 +34,10 @@ jobs:
         
     - name: Verify executable exists
       run: |
-        if not exist "dist\元智選課機器人.exe" (
+        if (-not (Test-Path "dist\元智選課機器人.exe")) {
           echo "Error: Executable not found!"
           exit 1
-        )
+        }
         echo "Executable found successfully"
         
     - name: Create ZIP archive
