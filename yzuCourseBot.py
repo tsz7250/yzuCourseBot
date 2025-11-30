@@ -1,8 +1,4 @@
-'''
-    Date  : 2019/09
-    Author: Doem
-    E-mail: aa0917954358@gmail.com
-'''
+# cmd line version
 
 import os
 import cv2
