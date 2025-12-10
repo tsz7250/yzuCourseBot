@@ -1,16 +1,15 @@
-import flet as ft
+﻿import flet as ft
 import os
 import sys
 import time
 import tempfile
 import requests
-import numpy as np
 import configparser
-import cv2
 from threading import Thread, Event
 from bs4 import BeautifulSoup
-from keras.models import load_model
-import tensorflow as tf
+from multiprocessing import freeze_support
+
+# 注意：numpy 和 cv2 移至懶加載，只在需要驗證碼時才 import
 
 # 修復 PyInstaller 打包後 sys.stdout 和 sys.stderr 為 None 的問題
 if sys.stdout is None:
@@ -41,23 +40,8 @@ class CourseBot:
         # captcha.png 存放在系統暫存目錄
         self.captcha_path = os.path.join(tempfile.gettempdir(), 'yzuCourseBot_captcha.png')
 
-        # for keras - 直接載入模型但不編譯（從打包資源中讀取）
-        model_path = resource_path('model.h5')
-        try:
-            self.model = load_model(model_path)
-        except ValueError as e:
-            if 'lr' in str(e):
-                # 直接載入模型但跳過編譯
-                self.model = load_model(model_path, compile=False)
-                # 手動重新編譯
-                self.model.compile(
-                    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-                    loss='categorical_crossentropy',
-                    metrics=['accuracy']
-                )
-            else:
-                raise e
-        
+        # 移至載入 TensorFlow 模型，等到需要時才加載
+        self.model = None        
         self.n_classes = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
         # for requests
@@ -82,17 +66,57 @@ class CourseBot:
 
         self.selectPayLoad = {}
 
+    def _load_model(self):
+        """移至載入 TensorFlow 模型，等到真正需要時才 import 相關套件"""
+        if self.model is None:
+            # 抑制不必要的 TensorFlow 警告和日誌
+            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+            os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+            # 現在才 import NumPy, cv2 和 TensorFlow（懶載入）
+            import numpy as np
+            import cv2
+            from keras.models import load_model
+            import tensorflow as tf
+
+            # 保存 numpy 和 cv2 到 instance，供其他方法使用
+            self.np = np
+            self.cv2 = cv2
+
+            # 設定 TensorFlow 日誌級別
+            tf.get_logger().setLevel('ERROR')
+            tf.autograph.set_verbosity(0)
+
+            model_path = resource_path('model.h5')
+            try:
+                self.model = load_model(model_path)
+            except ValueError as e:
+                if 'lr' in str(e):
+                    self.model = load_model(model_path, compile=False)
+                    self.model.compile(
+                        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                        loss='categorical_crossentropy',
+                        metrics=['accuracy']
+                    )
+                else:
+                    raise e
+            self.log("TensorFlow 模型載入完成")
+
     def predict(self, img):
+        # 確保模型已載入
+        self._load_model()
         # 使用 verbose=0 避免在 GUI 模式下輸出進度條
-        prediction = self.model.predict(np.array([img]), verbose=0)
+        prediction = self.model.predict(self.np.array([img]), verbose=0)
 
         predicStr = ""
         for pred in prediction:
-            predicStr += self.n_classes[np.argmax(pred[0])]
+            predicStr += self.n_classes[self.np.argmax(pred[0])]
         return predicStr
 
     def captchaOCR(self):
-        captchaImg = cv2.imread(self.captcha_path) / 255.0
+        # 確保模型已載入（這樣才能使用 cv2）
+        self._load_model()
+        captchaImg = self.cv2.imread(self.captcha_path) / 255.0
         return self.predict(captchaImg)
 
     # login into system and get session
@@ -853,4 +877,10 @@ def main(page: ft.Page):
     load_config()
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    # 需要 freeze_support() 以支援 PyInstaller 打包後 multiprocessing
+    freeze_support()
+    # 使用自定義視窗模式運行 Flet
+    ft.app(
+        target=main,
+        view=ft.AppView.FLET_APP_HIDDEN  # 不顯示 Flet 內建的任務列圖示
+    )
