@@ -1,15 +1,15 @@
 # yzuCourseBot 元智選課機器人
 
+<img src="./pic/main.png" alt="主頁面">
+<img src="./pic/setting.png" alt="設定">
+
 ## 專案說明
-本專案是基於原始 yzuCourseBot 進行 fork 並針對 Windows 環境優化的版本。主要修改包括：
+本專案基於原始 yzuCourseBot 進行 fork 並針對 Windows 環境優化，主要修改與整合包含：
 - 更新套件相容性，支援 Python 3.12
 - 修正 Windows 平台的依賴問題
 - 提供完整的 Windows 安裝指南
 - 優化在 Windows 環境下的執行穩定性
 - 新增可執行檔，降低使用門檻
-
-## Introduction
-本專案整合了以下開源專案：
 - **選課邏輯**：基於 [原始 yzuCourseBot](https://github.com/Doem/yzuCourseBot) 進行 fork
 - **驗證碼識別**：使用 [CNN-model-for-YZU-cpatcha-OCR](https://github.com/Doem/CNN-model-for-YZU-cpatcha-OCR) 的 CNN 模型
 
@@ -127,33 +127,41 @@
 詳細說明請參考 [使用說明.md](使用說明.md)
 
 
-### 方式二：使用 GUI 圖形介面版本
+### 方式二：手動執行 Python 版本
 
-1. 確保已安裝 Python 3.8 或以上版本
-2. 安裝依賴套件：
-```bash
-pip install -r requirements.txt
-```
+> ⚠️ **前置需求：需要安裝 Python 環境**  
+> 完整安裝流程（包含 Python 安裝、套件安裝等）請參考 [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md)
 
-3. 執行 GUI 版本：
+安裝完成後，可選擇以下兩種執行方式：
+
+#### 2-A. GUI 圖形介面版本
+
+執行 GUI 版本：
 ```bash
 python yzuCourseBot_GUI.py
 ```
 
-4. 在圖形介面中輸入帳號、密碼、課程清單，點擊「開始選課」
+在圖形介面中輸入帳號、密碼、課程清單，點擊「開始選課」
 
-### 方式三：使用原始命令列版本
-
-
-#### 1. 新增 `accounts.ini` 存放Portal帳密的檔案，格式如下:
+若要自行打包成 `.exe`：
+```bash
+# Windows
+.\build.bat
 ```
+
+打包後的執行檔位於 `dist\元智選課機器人.exe`
+
+#### 2-B. 命令列版本
+
+1. 新增 `accounts.ini` 存放Portal帳密的檔案，格式如下:
+```ini
 [Default]
 Account= your account
 Password= your password
 ```
 
-#### 2. 修改 `yzuCourseBot.py` 中的`coursesList`變數新增想選的課程清單，格式如下:
-```
+2. 修改 `yzuCourseBot.py` 中的`coursesList`變數新增想選的課程清單，格式如下:
+```python
 coursesList = [
     '304,CS352A', 
     '901,LS239A', 
@@ -167,24 +175,7 @@ coursesList = [
 
 以上資訊都能在課程查詢網站或是選課系統中得知的訊息
 
-#### 3. 執行 `yzuCourseBot.py`
-```
-$ python yzuCourseBot.py
-```
-
-**請用Python3以上的版本執行**
-
-## 打包成執行檔
-
-如果您想自己打包成 `.exe` 執行檔：
-
-### 本地打包
+3. 執行 `yzuCourseBot.py`
 ```bash
-# Windows
-.\build.bat
+python yzuCourseBot.py
 ```
-
-打包後的執行檔位於 `dist\元智選課機器人.exe`
-
-## Windows 手動安裝教學
-請參考 [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md) 文件以獲得完整的 Windows 安裝指南。
