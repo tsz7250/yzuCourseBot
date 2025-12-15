@@ -1,5 +1,5 @@
 # img
-*.png
+captcha.png
 
 # jupyter
 debug.ipynb
